@@ -1,13 +1,12 @@
-// userModel.js
 const db = require('../config/database');
 
-const getUsers = async () => {
+const getUserByUsernameOrEmail = async (usernameOrEmail) => {
     try {
-        const query = 'SELECT * FROM users';
-        const { rows } = await db.query(query);
-        return rows;
+        const query = 'SELECT * FROM users WHERE username = $1 OR email = $1';
+        const { rows } = await db.query(query, [usernameOrEmail]);
+        return rows[0];
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching user:', error);
         throw error;
     }
 };
@@ -23,4 +22,4 @@ const createUser = async (username, email, password, token) => {
     }
 };
 
-module.exports = { getUsers, createUser };
+module.exports = { getUserByUsernameOrEmail, createUser };
