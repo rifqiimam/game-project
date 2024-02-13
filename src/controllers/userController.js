@@ -17,10 +17,9 @@ exports.login = async (req, res) => {
         }
 
         
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
-        await model.saveToken({token,id: user.id});
-        
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        console.log(user, user.id,'cari user')
+        await model.saveToken({token}, user.id);
         
         res.json({ token });
         
