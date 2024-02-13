@@ -18,7 +18,7 @@ exports.login = async (req, res) => {
 
         
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        console.log(user, user.id,'cari user')
+        //console.log(user, user.id,'cari user')
         await model.saveToken({token}, user.id);
         
         res.json({ token });
@@ -52,31 +52,28 @@ exports.signUp = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
+    //console.log('params', req.body)
+    const { username } = req.body;
+    const token = req.headers.authorization;
+    //console.log('tokennya',token,username)
+
+    if (!token || !token.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    }   
+
     try {
-        // 1. Check for valid authentication header with JWT token:
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Unauthorized' });
+        const authToken = token.split(' ')[1];
+        const user = await model.getUserByUsernameOrEmail(username);
+
+        if (!user || user.token !== authToken) {
+            return res.status(401).json({ message: 'Unauthorized: Invalid token' });
         }
 
-        // 2. Extract and verify JWT token (if token-based authentication):
-        const token = authHeader.split(' ')[1]; // Assuming space after 'Bearer'
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (!decoded) {
-            return res.status(401).json({ error: 'Invalid token' });
-        }
+        await model.saveToken( {token: null},user.id);
 
-        // 3. Invalidate token (optional):
-        // You can handle token invalidation using a blacklist, but it's not included here.
-
-        // 4. Clear client-side cookies/local storage (if used):
-        // Here, we're clearing any JWT tokens stored in cookies
-        res.clearCookie('token'); 
-
-        // 5. Return success response:
-        res.status(200).json({ message: 'Logged out successfully' });
+        res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error during logout:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

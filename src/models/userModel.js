@@ -12,12 +12,13 @@ const getUserByUsernameOrEmail = async (usernameOrEmail) => {
 };
 
 const saveToken = async (token,id) => {
+    console.log("saveToken", token, id)
     try {
-        console.log(token.token,id)
+        //console.log(token.token,id)
         const query = 'UPDATE users SET token = $1 WHERE id = $2 RETURNING *';
         
         const rows = await db.query(query, [token.token,id]);
-        console.log(rows,'masuk save token')
+        //console.log(rows,'masuk save token')
         return rows[0]; // Return the updated user row
     } catch (error) {
         console.error('Error saving token:', error);

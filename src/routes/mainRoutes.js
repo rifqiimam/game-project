@@ -6,14 +6,14 @@ const swaggerUI = require("swagger-ui-express");
 
 const option = {
 
-    
+
 }
 
 const router = express.Router();
 
 router.post('/login', userController.login);
 router.post('/signup', userController.signUp);
-router.delete('/logout', userController.logout);
+router.post('/logout', userController.logout);
 
 module.exports = router;
  
