@@ -5,22 +5,23 @@ const bcrypt = require("bcrypt");
 exports.login = async (req, res) => {
     const { username, password } = req.body;
     try {
-        // Retrieve user from the database based on username or email
+        
         const user = await model.getUserByUsernameOrEmail(username);
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Check if the password provided matches the hashed password stored in the database
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // If the credentials are valid, generate a JWT token
+        
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        await model.saveToken( {userId: user.id,token});
-        // Return the JWT token to the client
+        
+        await model.saveToken({token,id: user.id});
+        
+        
         res.json({ token });
         
     } catch (error) {
