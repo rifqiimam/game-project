@@ -12,7 +12,7 @@ const getUserByUsernameOrEmail = async (usernameOrEmail) => {
 };
 
 const saveToken = async (token,id) => {
-    console.log("saveToken", token, id)
+    //console.log("saveToken", token, id)
     try {
         //console.log(token.token,id)
         const query = 'UPDATE users SET token = $1 WHERE id = $2 RETURNING *';
@@ -37,4 +37,15 @@ const createUser = async (username, email, password, token) => {
     }
 };
 
-module.exports = { getUserByUsernameOrEmail, createUser,saveToken };
+const getAllUserByToken = async (token) => {
+    try {
+        const query = 'SELECT * FROM users WHERE token = $1';
+        const { rows } = await db.query(query, [token]);
+        return rows[0];
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        throw error;
+    }
+};
+
+module.exports = { getUserByUsernameOrEmail, createUser,saveToken, getAllUserByToken  };
