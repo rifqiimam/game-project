@@ -76,4 +76,23 @@ exports.logout = async (req, res) => {
         console.error('Error during logout:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+}
+
+exports.user = async(req,res)=>{
+    const token = req.headers.authorization;
+    if (!token || !token.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    }   
+
+    try {
+        const authToken = token.split(' ')[1];
+        const user = await model.getAllUserByToken(authToken);
+        console.log (user,authToken,'check user');
+        if (!user || user.token !== authToken) {
+            return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+        }
+        res.json(user.username);
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+        }
 };
