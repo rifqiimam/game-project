@@ -4,11 +4,6 @@ const userController = require('../controllers/userController');
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 
-const option = {
-
-
-}
-
 const router = express.Router();
 
 router.post('/login', userController.login);
@@ -17,4 +12,3 @@ router.post('/logout', userController.logout);
 router.get('/user', userController.user);
 
 module.exports = router;
- 
