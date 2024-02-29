@@ -38,5 +38,5 @@ app.use("/api", mainRoutes);
 const swaggerSpec = swaggerJSDoc(option);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8001;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
